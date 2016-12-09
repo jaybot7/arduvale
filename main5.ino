@@ -30,10 +30,10 @@ void loop() {
 //    display.setCursor(40,12*p);
 //    display.print(myArr[p][1]+30);
 
-    display.setCursor(80,12);
-    display.print(barrelx+32);
-    display.setCursor(80,24);
-    display.print(barrely);
+ //   display.setCursor(80,12); //for testing values on screen
+ //   display.print(barrelx+32);
+ //   display.setCursor(80,24);
+ //   display.print(barrely);
   }
 
   //coin counter

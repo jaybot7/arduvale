@@ -40,11 +40,12 @@ int crashDown(){     //   hit head and jump back down
 
 //draw coins and blocks
 int redrawObjects(){
-  //draw coin bag 
-  if (gotCoin != 1){  
-    spritey.drawBitmap(barrelx + 32, barrely, barrelMask, 0, 16, 16, SPRITE_IS_MASK_ERASE);
-    spritey.drawBitmap(barrelx + 32, barrely, barrel, 0, 16, 16, SPRITE_IS_MASK);       
-  }  
+//  //draw regular coin bag 
+//  if (gotCoin != 1){  
+//    spritey.drawBitmap(barrelx + 32, barrely, barrelMask, 0, 16, 16, SPRITE_IS_MASK_ERASE);
+//    spritey.drawBitmap(barrelx + 32, barrely, barrel, 0, 16, 16, SPRITE_IS_MASK);       
+//  }
+  
   //draw baddie bag 
       spritey.drawBitmap(baddiex+32, baddiey, barrelMask, 0, 16, 16, SPRITE_IS_MASK);
       spritey.drawBitmap(baddiex+32, baddiey, barrel, 0, 16, 16, SPRITE_IS_MASK_ERASE);
@@ -146,9 +147,9 @@ int moveLeft(int incoming){
 
     // random coinbags
     for (int x = 0; x < 4; x++){
-      if (myArr[x][0] < -64) { //this needs to be classed so i can do it with multiple objects
-          myArr[x][0] = 127;
-          myArr[x][2] = 0; //reset random coin
+      if (myArr[x][0] < -50) { //this needs to be classed so i can do it with multiple objects
+          myArr[x][0] = 200;
+         // myArr[x][2] = 0; //reset random coin
       }
     }
     redrawBG();
@@ -181,9 +182,9 @@ int moveRight(int incoming){
 
   // random coinbags
   for (int x = 0; x < 4; x++){
-      if (myArr[x][0] > 128) { //this needs to be classed so i can do it with multiple objects
-          myArr[x][0] = -64;
-          myArr[x][2] = 0; //reset random coin
+      if (myArr[x][0] > 250) { //this needs to be classed so i can do it with multiple objects
+          myArr[x][0] = -40;
+        //  myArr[x][2] = 0; //reset random coin ; value in the arr to emulate the old getCoin variable
       }
   }
   
@@ -302,101 +303,99 @@ int testCollision(int objectX, int objectY, int objectWidth, int objectHeight, i
 
 //test all collisions
 int collisions(){
-  //coinbag single
-  int coinCol = testCollision(barrelx, barrely, barrelSize, barrelSize, heroX, jumpHeight, heroSize, heroSize);
-  if (coinCol == 1 && barrelx > 5){ //my collision check doesnt test for negatives and i'm too stupid to implement it there
-      // do stuff
-    if (gotCoin == 0){
-      totalCoins++;   
-      if(tuney.playing()) {
-          TUNE_OP_STOP; //new score stop
-      }
-      if (soundOn){
-       tuney.playScore(coiny);
-      }
-    }    
-    gotCoin = 1;  
-    barrely = random(-5, 50);
-   }
+ 
+//  //coinbag single
+//  int coinCol = testCollision(barrelx, barrely, barrelSize, barrelSize, heroX, jumpHeight, heroSize, heroSize);
+//  if (coinCol == 1 && barrelx > 5){ //my collision check doesnt test for negatives and i'm too stupid to implement it there
+//      // do stuff
+//    if (gotCoin == 0){
+//      totalCoins++;   
+//      if(tuney.playing()) {
+//          TUNE_OP_STOP; //new score stop
+//      }
+//      if (soundOn){
+//       tuney.playScore(coiny);
+//      }
+//    }    
+//    gotCoin = 1;  
+//    barrely = random(-5, 50);
+//   }
 
   //random bags
   for (int x = 0; x < 4; x++){
      //collision stuff test against random coins
      int XcoinCol = testCollision(myArr[x][0], myArr[x][1], barrelSize, barrelSize, heroX, jumpHeight, heroSize, heroSize);
-     if (XcoinCol == 1 && myArr[x][0] > 5 && myArr[x][0] < 123){ //my collision check doesnt test for negatives and i'm too stupid to implement it there
-        // do stuff
-      if (myArr[x][2] == 0){
-        totalCoins++;   
-        if(tuney.playing()) {
-          TUNE_OP_STOP; //new score stop
-        }
-        if (soundOn){
-          tuney.playScore(coiny);
-        }
-      }    
-        myArr[x][2] = 1; int tempRander = 0; 
-        myArr[x][1] = random(10, 40); 
-        myArr[x][0] = random(-128, -156); 
-        display.setCursor(10,0);
-        display.print(myArr[x][2]);
-        myArr[x][2] = 1;
-//        int randValX = random(50, 100);
-//        int randValY = random(10, 50);
-//        while (tempRander == 0){
-//          for (int y = 0; y < 4; y++){
-//            if (testCollision(randValX, randValY, barrelSize, barrelSize, myArr[y][0], myArr[y][1], barrelSize, barrelSize) == 0){
-//              myArr[y][0] = randValX; //????
-//              myArr[y][1] = randValY;
-//              redrawObjects();
-//              tempRander = 1;
-//            } else {
-//              randValX += 64;
-//              randValY += 64;
-//              tempRander = 1;
-//            }
-//          }
-//        }
-        
+       if (XcoinCol == 1 && myArr[x][0] > 5){ 
+          // do stuff
+          int randValX = 0;
+          int randValY = random(10, 40);
+          int tempRander = 0;
+          while (tempRander < 4){
+            for (int y = 1; y < 4; y++){
+              if (testCollision(randValX, randValY, barrelSize, barrelSize, myArr[y][0], myArr[y][1], barrelSize, barrelSize) == 1 &&
+              testCollision(randValX, randValY, barrelSize, barrelSize, baddiex, baddiey, barrelSize, barrelSize) == 1){
+                randValX += 32;
+                randValY = random(10, 40);
+                 tempRander = 0;
+                y = 1;
+              } else {
+                tempRander++;
+              }
+            }
+          }
+          //passed all 4 checks against other bags so print it
+          myArr[x][0] = 200;           
+          myArr[x][1] = randValY; 
+          redrawObjects();
+          
+          //SFX
+          if(tuney.playing()) {
+             TUNE_OP_STOP; //new score stop
+          }
+          if (soundOn){
+              tuney.playScore(coiny);
+          }
+          totalCoins++;           
        // redrawObjects(); //for mid-air block flash reset
-       }
+     }
    }
 
 ///////jumping on bricks
-//  int baddieCol = testCollision(baddiex, baddiey, barrelSize, barrelSize, heroX, jumpHeight, heroSize, heroSize);
-//     if (baddieCol == 1 && baddiex > -12){ //baddie is visible and touching
-//        // do stuff
-//        
-//      if (gotBaddie == 0){ // if its the first touch
-//          if (baddiey > jumpHeight+20 && onTop != 1){  //if hero is above the brick magic 20 number don't ask....
-//                groundHeight = baddiey-24; //set the ground height the player will walk on to the top of the brick
-//                onTop = 1; // and let us know he is on a brick 
-//                 
-//          } else { //hero is touching but not above the brick
-//            onTop = 0;  
-//            if (baddiey + 14 < jumpHeight){ //why 14 i dont know:: hero is below bottom of the brick
-//                    crashDown(); //hit your head and go back down
-//            }
-//          }
-//        gotBaddie = 1;                       
-//      } else { //not the first touch
-//      
-//        //already set to baddie and touching  
-//        // uhhh nothing to do here...
-//        
-//      }
-//
-//     } else {
-//      //not touching or not visible object
-//        groundHeight = groundBase; //need these to reset on the first block
-//        gotBaddie = 0;
-//        onTop = 0;  
-//      
-//     }
-//
-//     if (gotBaddie != 1){
-//      groundHeight = groundBase;
-//      onTop = 0;
-//     }
+  int baddieCol = testCollision(baddiex, baddiey, barrelSize, barrelSize, heroX, jumpHeight, heroSize, heroSize);
+     if (baddieCol == 1 && baddiex > -12){ //baddie is visible and touching
+        // do stuff
+        
+      if (gotBaddie == 0){ // if its the first touch
+          if (baddiey > jumpHeight+20 && onTop != 1){  //if hero is above the brick magic 20 number don't ask....
+                groundHeight = baddiey-24; //set the ground height the player will walk on to the top of the brick
+                onTop = 1; // and let us know he is on a brick 
+                 
+          } else { //hero is touching but not above the brick
+            onTop = 0;  
+            if (baddiey + 14 < jumpHeight){ //why 14 i dont know:: hero is below bottom of the brick
+                    crashDown(); //hit your head and go back down
+            }
+          }
+        gotBaddie = 1;                       
+      } else { //not the first touch
+      
+        //already set to baddie and touching  
+        // uhhh nothing to do here...
+        
+      }
+
+     } else {
+      //not touching or not visible object
+        groundHeight = groundBase; //need these to reset on the first block
+        gotBaddie = 0;
+        onTop = 0;  
+      
+     }
+
+     if (gotBaddie != 1){
+      groundHeight = groundBase;
+      onTop = 0;
+     }
   
 //end collision stuff 
 }
@@ -423,13 +422,16 @@ int jumpLogic(){
         }
         if (jumpDown == 1 && tHeight < groundHeight){
             moveDown(1);
+            gotBaddie = 0;
         } else {
            if (jumpDown == 1 && tHeight >= groundHeight){
               jump = 0;
+              gotBaddie = 0;
               redrawBG();
            } else {
                jump = 0;
-               jumpDown = 0;              
+               jumpDown = 0;
+            //   gotBaddie = 0;              
            }
         } 
      }
@@ -480,8 +482,14 @@ int buttonHandling(){
         //animSpeed = 0; //was run but i dont like it
       }     else if(buttons & B_BUTTON) {
           if (jump != 1 && nojump == 0){
-              jump = 1; 
-              jumpHeight = groundHeight - 1; //???? need this? i affects the flash animation but...?
+              jump = 1;
+              gotBaddie = 0; 
+              if (onTop == 0){
+                jumpHeight = groundHeight - 1; //need this otherwise you'll never jump
+              } else {
+                // do something to stop the ground from moving up here, check functions
+                // otherwise you'll just sink, like it does now
+              }
               nojump = 1;
               jumpLimit = jumpHeight - 25; //set jump limit based off of when button pressed
               if (soundOn){
