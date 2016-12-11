@@ -9,6 +9,7 @@ int myArr[4][2]; // [ [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0] ] array used t
 
 int jumpLimit;
 
+byte killBlock = 0;
 int myArrDiv = 3; // divisible number for loop math should divide up the arrays into something easily... like 3
 int onTop = 0;
 int rightCenter = 60; //center character for right side pans
@@ -16,6 +17,7 @@ int leftCenter = 40; //center character for right side pans
 int panLeft = 0;
 int panRight = 0;  
 
+byte colorOn = 0; //for flashing blocks anim
 byte BGmove = 0;      //counts how many pixels the background has moved
 
 int XcoinCol = 0;
@@ -27,7 +29,9 @@ int baddiey = 28;
 int XgotCoin = 0;
 int cloudx = 16;      //location of the cloud
 
+byte gotMoney = 0;//check if block has been hit already
 int megaCounter = 0; //a counter so we don't advance hero's animation frames too quickly
+int walkerCounter = 0;
 int megaFrame = 0;   //hero's animation frame
 long delta = 0;       //the time that has passed between one frame of motion and the next
 

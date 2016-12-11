@@ -30,8 +30,8 @@ void loop() {
 //    display.setCursor(40,12*p);
 //    display.print(myArr[p][1]+30);
 
- //   display.setCursor(80,12); //for testing values on screen
- //   display.print(barrelx+32);
+    display.setCursor(10,0); //for testing values on screen
+    display.print(megaCounter); //framecounter
  //   display.setCursor(80,24);
  //   display.print(barrely);
   }
@@ -57,17 +57,24 @@ void loop() {
 
 ///count animation frame      
     megaCounter++;  //all animations frame counter
-    if (flipColor == 1 && jumpHeight <= groundBase){
+    walkerCounter++;
+    //if (flipColor == 1 && jumpHeight <= groundBase){
+      if (megaCounter % 30 == 0 && killBlock != 1){
       flipcolors(); 
     } 
           
-    if(megaCounter > 10 && directionMove != 3) {
-       megaCounter = 0; 
+    if(walkerCounter > 10 && directionMove != 3) {
+       walkerCounter = 0;
+       //flipcolors(); 
        megaFrame++; //advances player animation      
        if(megaFrame > 3) { //number of frames in walk animation  
-         megaFrame = 0;         
-       }
+         megaFrame = 0;     
+             
+       }  
     } 
+    if ( megaCounter > 1000){
+       megaCounter = 0;
+    }
 
 ///jumping
     jumpLogic();

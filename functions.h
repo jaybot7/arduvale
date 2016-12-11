@@ -16,26 +16,51 @@ Sprites spritey(display);
 
 int counters(){
   display.drawChar(94, 0, tempChar, 255, 0, 1);
-  display.setCursor(105,0);
+  display.setCursor(102,0);
   display.print("x");
-  display.setCursor(116,0);
+  display.setCursor(110,0);
   display.print(totalCoins);
  // display.setCursor(10,0);
 //  display.print(myArr[x][1]);
 }
 
-int crashDown(){     //   hit head and jump back down
+int crashDown(int incoming){     //   hit head and jump back down
       jumpDown = 1;
-    //flash baddie bag
-      flipColor = 1;
-    // play coin sfx
-    if(tuney.playing()) {
-      TUNE_OP_STOP;
-    }
-    if (soundOn){
-      tuney.playScore(abba);      
-    }
-    totalCoins++;
+    if (incoming == 1){ 
+     //flash baddie bag
+        flipColor = 1;
+      // play coin sfx
+      if(tuney.playing()) {
+        TUNE_OP_STOP;
+      }
+      if (soundOn){
+        tuney.playScore(abba);      
+      }
+      totalCoins += 5;
+      gotMoney = 1;
+     }
+}
+
+// invert the colors of an object to make it flash
+int flipcolors(){
+  //add some incoming cvalues later
+  //draw baddie bag 
+  if (gotMoney == 0){
+      if (colorOn == 0){
+          spritey.drawBitmap(baddiex+32, baddiey, barrel, 0, 16, 16, SPRITE_IS_MASK);    
+          spritey.drawBitmap(baddiex+32, baddiey, barrelMask, 0, 16, 16, SPRITE_IS_MASK_ERASE);
+          colorOn = 1;
+      } else {
+          spritey.drawBitmap(baddiex+32, baddiey, barrelMask, 0, 16, 16, SPRITE_IS_MASK);
+          spritey.drawBitmap(baddiex+32, baddiey, barrel, 0, 16, 16, SPRITE_IS_MASK_ERASE);
+          colorOn = 0;
+      }
+  } else {
+     //
+          spritey.drawBitmap(baddiex+32, baddiey, barrel, 0, 16, 16, SPRITE_IS_MASK);    
+          spritey.drawBitmap(baddiex+32, baddiey, barrelMask, 0, 16, 16, SPRITE_IS_MASK_ERASE);
+          killBlock = 1;
+  }
 }
 
 //draw coins and blocks
@@ -47,8 +72,17 @@ int redrawObjects(){
 //  }
   
   //draw baddie bag 
-      spritey.drawBitmap(baddiex+32, baddiey, barrelMask, 0, 16, 16, SPRITE_IS_MASK);
-      spritey.drawBitmap(baddiex+32, baddiey, barrel, 0, 16, 16, SPRITE_IS_MASK_ERASE);
+     if (colorOn == 0){
+        spritey.drawBitmap(baddiex+32, baddiey, barrelMask, 0, 16, 16, SPRITE_IS_MASK);
+        spritey.drawBitmap(baddiex+32, baddiey, barrel, 0, 16, 16, SPRITE_IS_MASK_ERASE);
+      } else {  
+          spritey.drawBitmap(baddiex+32, baddiey, barrel, 0, 16, 16, SPRITE_IS_MASK);    
+          spritey.drawBitmap(baddiex+32, baddiey, barrelMask, 0, 16, 16, SPRITE_IS_MASK_ERASE);          
+      }
+      if (killBlock == 1){
+        spritey.drawBitmap(baddiex+32, baddiey, barrel, 0, 16, 16, SPRITE_IS_MASK);    
+          spritey.drawBitmap(baddiex+32, baddiey, barrelMask, 0, 16, 16, SPRITE_IS_MASK_ERASE);
+      }
 
   // draw random coins
   for (int x = 0; x < 4; x++){
@@ -73,14 +107,7 @@ int redrawBG(){
 } 
 
 
-// invert the colors of an object to make it flash
-int flipcolors(){
-  //add some incoming cvalues later
-  //draw baddie bag 
-      spritey.drawBitmap(baddiex+32, baddiey, barrel, 0, 16, 16, SPRITE_IS_MASK);    
-      spritey.drawBitmap(baddiex+32, baddiey, barrelMask, 0, 16, 16, SPRITE_IS_MASK_ERASE);
-      display.display();     
-}
+
 
 int moveUp(int incoming){
    //push down
@@ -137,6 +164,8 @@ int moveLeft(int incoming){
     if (baddiex < -64) { //this needs to be classed so i can do it with multiple objects
         baddiex = 127;
         baddiey = random(-5, 50);
+        gotMoney = 0;
+        killBlock = 0;
     }   
     if (cloudx < -95) {
       cloudx = 256;
@@ -170,6 +199,8 @@ int moveRight(int incoming){
   if (baddiex > 128){
     baddiex = -64;
     baddiey = random(-5, 50);
+    gotMoney = 0;
+    killBlock = 0;
   }
   
   if(cloudx > 256) {
@@ -373,7 +404,10 @@ int collisions(){
           } else { //hero is touching but not above the brick
             onTop = 0;  
             if (baddiey + 14 < jumpHeight){ //why 14 i dont know:: hero is below bottom of the brick
-                    crashDown(); //hit your head and go back down
+                    if (jump != 0 && jumpDown != 1 && gotMoney == 0){
+                       crashDown(1); //hit your head and go back down with money                      
+                    } else {crashDown(0);
+                   }
             }
           }
         gotBaddie = 1;                       
@@ -486,12 +520,14 @@ int buttonHandling(){
               gotBaddie = 0; 
               if (onTop == 0){
                 jumpHeight = groundHeight - 1; //need this otherwise you'll never jump
+                jumpLimit = jumpHeight - 25; //set jump limit based off of when button pressed
               } else {
                 // do something to stop the ground from moving up here, check functions
                 // otherwise you'll just sink, like it does now
+                jumpLimit = groundHeight - 25; //set jump limit based off of when button pressed
               }
               nojump = 1;
-              jumpLimit = jumpHeight - 25; //set jump limit based off of when button pressed
+              
               if (soundOn){
                   tuney.playScore(jumpy);      
               }
@@ -499,8 +535,11 @@ int buttonHandling(){
       } else {
          nojump = 0;
          // and do anything else you want when the player hits the ground here
+         
+         //flipColor = 1;
          flipColor = 0; //turn off coin animations when hit the ground
       }
+      
 }
 
 /////////////////
