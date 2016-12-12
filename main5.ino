@@ -32,8 +32,8 @@ void loop() {
 
     display.setCursor(10,0); //for testing values on screen
     display.print(megaCounter); //framecounter
- //   display.setCursor(80,24);
- //   display.print(barrely);
+    display.setCursor(80,24);
+    display.print(jumpDown);
   }
 
   //coin counter

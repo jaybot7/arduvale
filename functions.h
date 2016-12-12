@@ -394,41 +394,42 @@ int collisions(){
 ///////jumping on bricks
   int baddieCol = testCollision(baddiex, baddiey, barrelSize, barrelSize, heroX, jumpHeight, heroSize, heroSize);
      if (baddieCol == 1 && baddiex > -12){ //baddie is visible and touching
-        // do stuff
-        
+        // do stuff  
       if (gotBaddie == 0){ // if its the first touch
-          if (baddiey > jumpHeight+20 && onTop != 1){  //if hero is above the brick magic 20 number don't ask....
+          if (baddiey > jumpHeight+20){  //if hero is above the brick magic 20 number don't ask....
                 groundHeight = baddiey-24; //set the ground height the player will walk on to the top of the brick
                 onTop = 1; // and let us know he is on a brick 
+                jumpDown = 0; // and stop falling down
+                jump = 0; // and stop jumping 
                  
           } else { //hero is touching but not above the brick
             onTop = 0;  
             if (baddiey + 14 < jumpHeight){ //why 14 i dont know:: hero is below bottom of the brick
-                    if (jump != 0 && jumpDown != 1 && gotMoney == 0){
+                    if (jump != 0 && jumpDown != 1 && gotMoney == 0){ //if below the brick and hitting his head on it
                        crashDown(1); //hit your head and go back down with money                      
-                    } else {crashDown(0);
+                    } else {
+                      crashDown(0); // unless it's empty
                    }
             }
           }
         gotBaddie = 1;                       
       } else { //not the first touch
-      
         //already set to baddie and touching  
-        // uhhh nothing to do here...
-        
+        // uhhh nothing to do here...   
       }
 
-     } else {
-      //not touching or not visible object
+     } else {  //not touching anymore or not visible object
         groundHeight = groundBase; //need these to reset on the first block
         gotBaddie = 0;
         onTop = 0;  
-      
+        
+      if (jump == 0 && jumpHeight < groundHeight-2 && jumpDown == 0){
+          jumpDown = 1;
+        }
      }
 
      if (gotBaddie != 1){
-      groundHeight = groundBase;
-      onTop = 0;
+     // onTop = 0;
      }
   
 //end collision stuff 
@@ -439,9 +440,9 @@ int jumpLogic(){
     //make sure B button is still pressed
     if (jump == 1 && tHeight > jumpLimit && jumpDown == 0){
        if (buttons & B_BUTTON || tHeight > groundHeight - 20){            
-         if (directionMove == 3){
+         if (directionMove == 3){ // not moving left or right, standing still
             moveUp(1);     
-         } else {
+         } else { // if walking left or right right jumping
            moveUp(1);
          }
        } else {
@@ -464,8 +465,7 @@ int jumpLogic(){
               redrawBG();
            } else {
                jump = 0;
-               jumpDown = 0;
-            //   gotBaddie = 0;              
+               jumpDown = 0; 
            }
         } 
      }
@@ -520,11 +520,11 @@ int buttonHandling(){
               gotBaddie = 0; 
               if (onTop == 0){
                 jumpHeight = groundHeight - 1; //need this otherwise you'll never jump
-                jumpLimit = jumpHeight - 25; //set jump limit based off of when button pressed
+                //jumpLimit = jumpHeight - 25; //set jump limit based off of when button pressed
               } else {
                 // do something to stop the ground from moving up here, check functions
                 // otherwise you'll just sink, like it does now
-                jumpLimit = groundHeight - 25; //set jump limit based off of when button pressed
+                jumpHeight = groundHeight - 1;
               }
               nojump = 1;
               

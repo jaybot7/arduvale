@@ -54,7 +54,7 @@ int totalCoins = 0; //counter for coins
 
 int flipColor = 0; //used for object animations
 
-int soundOn = 1; // 1 is on
+int soundOn = 0; // 1 is on
 int tempChar = 2; //4 is diamond 3 is heart 15 is marker 2 is smiley face
 int jumpDown =0; //falling anim. hero going down
 int objectMover = 2;
